@@ -1,0 +1,36 @@
+#
+# Apps Packages for Chakra, part of chakra-project.org
+#
+# Maintainer: Neophytos Kolokotronis <tetris4@gmail.com>
+
+pkgname=ktp-send-file
+pkgver=0.4.0
+pkgrel=3
+pkgdesc="A File manager plugin to launch a file transfer job with a specified contact"
+arch=('i686' 'x86_64')
+url="http://www.kde.org"
+license=('GPL')
+depends=('ktp-filetransfer-handler' 'ktp-contact-list')
+makedepends=('cmake' 'automoc4')
+conflicts=('telepathy-kde-send-file')
+replaces=('telepathy-kde-send-file')
+provides=('telepathy-kde-send-file')
+groups=('kde-telepathy')
+install=${pkgname}.install
+source=("ftp://mirrors.mit.edu/kde/unstable/kde-telepathy/${pkgver}/src/${pkgname}-${pkgver}.tar.bz2")
+md5sums=('d6f65603c9d842adb5c8d6ec43c57677')
+
+build() {
+  cd "${srcdir}"
+  mkdir build
+  cd build
+  cmake ../${pkgname}-${pkgver} \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_BUILD_TYPE=Release
+  make
+}
+
+package() {
+  cd "${srcdir}"/build
+  make DESTDIR="${pkgdir}" install
+}

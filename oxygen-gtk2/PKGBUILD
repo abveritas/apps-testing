@@ -1,0 +1,37 @@
+#
+# Packages for Chakra, part of chakra-project.org
+#
+# maintainer: Manuel Tortosa <manutortosa[at]chakra-project[dot]org>
+
+pkgname=oxygen-gtk2
+pkgver=1.2.4
+pkgrel=2
+
+pkgdesc="The Oxygen engine for GTK2, for better Qt/GKT+ integration."
+arch=('i686' 'x86_64')
+url=("https://projects.kde.org/projects/playground/artwork/oxygen-gtk")
+license=('LGPL3' 'GPL')
+depends=('cairo')
+makedepends=('gcc' 'cmake' 'gtk2')
+provides=('oxygen-gtk')
+conflicts=('oxygen-gtk')
+categories=('system')
+groups=('gtk-integration')
+
+source=("http://download.kde.org/stable/${pkgname}/${pkgver}/src/${pkgname}-${pkgver}.tar.bz2")
+md5sums=('107c56ae519483fcb747b751680bbf37')
+
+build() {
+	cd $srcdir/$pkgname-$pkgver
+	rm -rf build
+	mkdir build && cd build
+	cmake -DCMAKE_BUILD_TYPE=Release \
+	      -DCMAKE_SKIP_RPATH=ON \
+	      -DCMAKE_INSTALL_PREFIX=/usr .. || return 1
+	make
+}
+
+package() {
+	cd $srcdir/$pkgname-$pkgver/build
+	make DESTDIR="${pkgdir}" install
+}

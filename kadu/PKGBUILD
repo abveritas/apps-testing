@@ -1,0 +1,36 @@
+#
+# Apps SC Packages for Chakra, part of chakra-project.org
+#
+# maintainer (i686): Phil Miller <philm[at]chakra-project[dog]org>
+# maintainer (x86_64): Manuel Tortosa <manutortosa[at]chakra-project[dot]org>
+
+# include global config
+source ../_buildscripts/${current_repo}-${_arch}-cfg.conf
+
+pkgname=kadu
+pkgver=0.11.0
+pkgrel=1
+pkgdesc="A Qt-based Gadu-Gadu client"
+arch=('i686' 'x86_64')
+url="http://www.kadu.net/"
+license=('GPL')
+depends=('libgadu' 'aspell' 'phonon' 'libxss' 'qca-ossl' 'libidn')
+makedepends=('cmake' 'libao' 'libsndfile' 'libxtst' 'curl' 'libmpdclient')
+conflicts=('kadu-svn')
+categories=('communication')
+install=$pkgname.install
+source=(http://download.kadu.im/stable/$pkgname-$pkgver.tar.bz2)
+sha1sums=('2e42cc0dc4a0fef0c352059a72fa753daa24f138')
+
+build() {
+  cd $srcdir/kadu-$pkgver
+  cmake . -DCMAKE_INSTALL_PREFIX=/usr
+  make
+}
+
+package() {
+  cd $srcdir/kadu-$pkgver
+  make DESTDIR=$pkgdir install
+  rm -rf $pkgdir/usr/{lib,include}/{libgadu*,pkgconfig}
+  rm -rf $pkgdir/usr/share/kadu/{HISTORY,README}
+}

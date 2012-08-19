@@ -1,0 +1,58 @@
+#
+# Apps Packages for Chakra, part of chakra-project.org
+#
+# maintainer (i686): Phil Miller <philm[at]chakra-project[dog]org>
+# maintainer (x86_64): Manuel Tortosa <manutortosa[at]chakra-project[dot]org>
+
+# include global config
+source ../_buildscripts/${current_repo}-${_arch}-cfg.conf
+
+pkgbase=kdevelop-php
+pkgname=('kdevelop-php' 'kdevelop-php-docs')
+pkgver=1.2.3
+_pkgver=4.2.3
+pkgrel=1
+pkgdesc="PHP plugin for Kdevelop"
+arch=('i686' 'x86_64')
+url="http://www.kdevelop.org/"
+license=('GPL')
+depends=("kdevelop=${_pkgver}" "kdevelop-pg-qt")
+makedepends=('cmake' 'automoc4')
+categories=('programming')
+options=('!makeflags')
+source=("http://download.kde.org/stable/kdevelop/${_pkgver}/src/${pkgname}-${pkgver}.tar.bz2"
+        "http://download.kde.org/stable/kdevelop/${_pkgver}/src/${pkgname}-docs-${pkgver}.tar.bz2")
+sha1sums=('b0dc43cf01d2005f2ad66872ce6b49b093a7ceb4'
+          'e399465638457fe015e920227e3aca5a53716804')
+
+build() {
+  cd "${srcdir}"
+  mkdir build
+  cd build
+  cmake ../${pkgname}-${pkgver} \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_BUILD_TYPE=Release
+  make
+
+  cd "${srcdir}"
+  mkdir build-docs
+  cd build-docs
+  # kdevelop-php-docs
+  cmake ../${pkgname}-docs-${pkgver} \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_BUILD_TYPE=Release
+  make
+}
+
+package_kdevelop-php() {
+  optdepends=('kdevelop-php-docs: documentation')
+  cd "${srcdir}/build"
+  make DESTDIR="${pkgdir}" install
+}
+
+package_kdevelop-php-docs() {
+  pkgdesc="Documentation for kdevelop-php"
+  depends=("kdevelop-php=${pkgver}")
+  cd "${srcdir}"/build-docs
+  make DESTDIR="${pkgdir}" install
+}

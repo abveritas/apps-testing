@@ -1,0 +1,36 @@
+#
+# Apps Packages for Chakra, part of chakra-project.org
+#
+# Maintainer: Neophytos Kolokotronis <tetris4@gmail.com>
+
+pkgname=ktp-presence-applet
+pkgver=0.4.0
+pkgrel=3
+pkgdesc="Plasma applet for managing your Telepathy account presence"
+arch=('any')
+url="http://www.kde.org"
+license=('GPL')
+depends=('ktp-common-internals' 'ktp-contact-list')
+makedepends=('cmake' 'automoc4')
+conflicts=('telepathy-kde-presence-applet')
+replaces=('telepathy-kde-presence-applet')
+provides=('telepathy-kde-presence-applet')
+groups=('kde-telepathy')
+categories=('utils' 'communication')
+source=("ftp://mirrors.mit.edu/kde/unstable/kde-telepathy/${pkgver}/src/${pkgname}-${pkgver}.tar.bz2")
+md5sums=('00125637628914d6e0256b6fa625a881')
+
+build() {
+  cd "${srcdir}"
+  mkdir build
+  cd build
+  cmake ../${pkgname}-${pkgver} \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_BUILD_TYPE=Release
+  make
+}
+
+package() {
+  cd "${srcdir}"/build
+  make DESTDIR="${pkgdir}" install
+}

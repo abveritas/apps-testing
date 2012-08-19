@@ -1,0 +1,37 @@
+#
+# Apps Packages for Chakra, part of chakra-project.org
+#
+# Maintainer: Neophytos Kolokotronis <tetris4@gmail.com>
+
+
+pkgname=ktp-text-ui
+pkgver=0.4.0
+pkgrel=6
+pkgdesc="Telepathy text chat handler"
+arch=('i686' 'x86_64')
+url="http://www.kde.org"
+license=('GPL')
+depends=('ktp-common-internals' 'ktp-contact-list' 'telepathy-logger-qt')
+makedepends=('cmake' 'automoc4' 'boost')
+optdepends=('telepathy-logger-qt: enables logging of chats, causes issues for some users')
+conflicts=('telepathy-kde-text-ui')
+replaces=('telepathy-kde-text-ui')
+provides=('telepathy-kde-text-ui')
+groups=('kde-telepathy')
+source=("ftp://mirrors.mit.edu/kde/unstable/kde-telepathy/${pkgver}/src/${pkgname}-${pkgver}.tar.bz2")
+md5sums=('9e44558bdcbd86cd55968e3a15d09761')
+
+build() {
+  cd "${srcdir}"
+  mkdir build
+  cd build
+  cmake ../${pkgname}-${pkgver} \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_BUILD_TYPE=Release
+  make
+}
+
+package() {
+  cd "${srcdir}"/build
+  make DESTDIR="${pkgdir}" install
+}

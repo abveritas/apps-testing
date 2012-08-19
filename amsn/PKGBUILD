@@ -1,0 +1,30 @@
+#
+# Chakra Packages for Chakra, part of chakra-project.org
+#
+# maintainer (i686): Phil Miller <philm[at]chakra-project[dog]org>
+# maintainer (x86_64): Manuel Tortosa <manutortosa[at]chakra-project[dot]org>
+
+# include global config
+source ../_buildscripts/${current_repo}-${_arch}-cfg.conf
+
+pkgname=amsn
+pkgver=0.98.4
+pkgrel=1
+pkgdesc="MSN client written in Tcl/Tk"
+arch=('i686' 'x86_64')
+url="http://amsn.sourceforge.net/"
+license=('GPL2')
+depends=('tk' 'tls')
+makedepends=('libjpeg' 'libpng' 'farsight2' 'libv4l')
+optdepends=('farsight2: for video conferencing')
+source=(http://downloads.sourceforge.net/sourceforge/${pkgname}/${pkgname}-${pkgver}-src.tar.bz2)
+md5sums=('96fd20e8709ced4443432d125a5e0a5a')
+categories=('communication')
+
+build() {
+  cd ${srcdir}/${pkgname}-${pkgver}
+
+  ./configure --prefix=/usr
+  make || return 1
+  make DESTDIR=${pkgdir} install
+}

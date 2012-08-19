@@ -1,0 +1,36 @@
+#
+# Apps Packages for Chakra, part of chakra-project.org
+#
+# Neophytos Kolokotronis <tetris4@gmail.com>
+
+pkgname=ktp-contact-applet
+pkgver=0.4.0
+pkgrel=3
+pkgdesc="Plasma applet for displaying contacts"
+arch=('any')
+url="http://www.kde.org"
+license=('GPL')
+depends=('ktp-common-internals' 'kde-workspace')
+makedepends=('cmake' 'automoc4')
+conflicts=('telepathy-kde-contact-applet')
+replaces=('telepathy-kde-contact-applet')
+provides=('telepathy-kde-contact-applet')
+groups=('kde-telepathy')
+categories=('utils' 'communication')
+source=("ftp://mirrors.mit.edu/kde/unstable/kde-telepathy/${pkgver}/src/${pkgname}-${pkgver}.tar.bz2")
+md5sums=('9fb45544bc113fdc3a0ec556dc2ba02c')
+
+build() {
+  cd "${srcdir}"
+  mkdir build
+  cd build
+  cmake ../${pkgname}-${pkgver} \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_BUILD_TYPE=Release
+  make
+}
+
+package() {
+  cd "${srcdir}"/build
+  make DESTDIR="${pkgdir}" install
+}

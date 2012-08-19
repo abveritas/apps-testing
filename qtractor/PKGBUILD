@@ -1,0 +1,36 @@
+#
+# Chakra Packages for Chakra, part of chakra-project.org
+#
+# maintainer (i686): Phil Miller <philm[at]chakra-project[dog]org>
+# maintainer (x86_64): Manuel Tortosa <manutortosa[at]chakra-project[dot]org>
+
+# include global config
+source ../_buildscripts/${current_repo}-${_arch}-cfg.conf
+
+pkgname=qtractor
+pkgver=0.5.1
+pkgrel=1
+pkgdesc="Audio/MIDI multitrack sequencer"
+arch=(i686 x86_64)
+url="http://qtractor.sourceforge.net/"
+license=('GPL')
+depends=('qt' 'jack' 'slv2' 'libmad' 'libsamplerate'
+         'rubberband' 'liblo')
+makedepends=('ladspa' 'dssi')
+categories=('multimedia')
+[ "$CARCH" = "i686" ] && optdepends=('dssi-vst: win32 VST support')
+source=(http://downloads.sourceforge.net/$pkgname/$pkgname-$pkgver.tar.gz)
+
+build() {
+  cd "$srcdir/$pkgname-$pkgver"
+
+  ./configure --prefix=/usr
+  make
+}
+
+package () {
+	cd "$srcdir/$pkgname-$pkgver"
+
+  make DESTDIR="$pkgdir/" install
+}
+md5sums=('c54adf974fd363a9f2151a802f170e6d')

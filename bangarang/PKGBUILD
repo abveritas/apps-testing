@@ -1,0 +1,28 @@
+#
+# Apps Packages for Chakra, part of chakra-project.org
+#
+# maintainer (i686): Phil Miller <philm[at]chakra-project[dog]org>
+# maintainer (x86_64): Manuel Tortosa <manutortosa[at]chakra-project[dot]org>
+
+# include global config
+source ../_buildscripts/${current_repo}-${_arch}-cfg.conf
+
+pkgname=bangarang
+pkgver=2.0.1
+pkgrel=2.1
+pkgdesc="Simple KDE media player."
+arch=('i686' 'x86_64')
+url="http://bangarangkde.wordpress.com/"
+license=('GPL3')
+depends=('kdelibs>=4.6' 'soprano' 'taglib>=1.5' 'kdebase-runtime')
+makedepends=('cmake' 'automoc4')
+categories=('multimedia')
+source=(http://opendesktop.org/CONTENT/content-files/113305-$pkgname-$pkgver.tar.gz)
+md5sums=('3ae7ce87e6a086f883f0de3a699a7c24')
+
+build() {
+  cd $srcdir/$pkgname-$pkgname
+
+  cmake -DCMAKE_INSTALL_PREFIX=/usr
+  make DESTDIR=$pkgdir install
+}

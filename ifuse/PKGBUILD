@@ -1,0 +1,37 @@
+#
+# Chakra Packages for Chakra, part of chakra-project.org
+#
+# maintainer (i686): Phil Miller <philm[at]chakra-project[dog]org>
+# maintainer (x86_64): Manuel Tortosa <manutortosa[at]chakra-project[dot]org>
+
+#from AUR package http://aur.archlinux.org/packages.php?ID=26724
+
+# include global config
+source ../_buildscripts/${current_repo}-${_arch}-cfg.conf
+
+pkgname=ifuse
+pkgver=1.1.1
+pkgrel=2
+pkgdesc='A fuse filesystem to access the contents of an iPhone or iPod Touch'
+url='http://libimobiledevice.org/'
+arch=('i686' 'x86_64')
+license=('LGPL2.1')
+depends=('libimobiledevice' 'fuse')
+categories=('utils')
+source=("http://www.libimobiledevice.org/downloads/${pkgname}-${pkgver}.tar.bz2")
+md5sums=('8d528a79de024b91f12f8ac67965c37c')
+
+build() {
+  cd ${pkgname}-${pkgver}
+
+  ./configure \
+    --prefix=/usr
+
+  make
+}
+
+package() {
+  cd ${pkgname}-${pkgver}
+
+  make DESTDIR=${pkgdir} install
+}

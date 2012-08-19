@@ -1,0 +1,47 @@
+#
+# Apps Packages for Chakra, part of chakra-project.org
+#
+# maintainer abveritas@chakra-project.org
+
+pkgname=amarok
+replaces=('amarok-base' 'amarok-engine-xine' 'amarok-base-mysqlfree')
+pkgver=2.5.0
+pkgrel=7
+pkgdesc="A media player for KDE"
+arch=("i686" "x86_64")
+url="http://amarok.kde.org"
+license=('GPL2' 'LGPL2' 'FDL')
+depends=('kde-runtime' 'mysql' 'qtscriptgenerator' 'taglib-extras' 'ffmpeg' 'libofa' 'qjson' 'loudmouth' 'liblastfm')
+makedepends=('pkgconfig' 'automoc4' 'cmake' 'libgpod' 'libmtp' 'loudmouth' 'docbook-xsl' 'libmygpo-qt' )
+optdepends=("libgpod: support Apple iPod audio devices"
+            "libmtp: support for portable media devices"
+            "libmygpo-qt: support for gpodder.net"  )
+categories=('multimedia')
+install="${pkgname}.install"
+source=("http://mirrors.mit.edu/kde/stable/${pkgname}/${pkgver}/src/${pkgname}-${pkgver}.tar.bz2"
+        'toolbarfix.patch'
+        'liblastfm.patch')
+md5sums=('b7983eaa33e4771769ae9e330c811995'
+         '135ceaaf24cf9e332eb4f714700da7ee'
+         '89d661fdbc419e152f2576a725326483')
+
+build() {
+  cd "${srcdir}"
+
+  #Patch to add the toolbar not showing well, should be removed in newer versions.
+  patch -p0 -i "${srcdir}"/toolbarfix.patch
+  #Patch to use liblastfm-1
+  patch -p1 -i "${srcdir}"/liblastfm.patch
+
+  mkdir build
+  cd build
+  cmake "../${pkgname}-${pkgver}" \
+    -DCMAKE_BUILD_TYPE=debugfull \
+    -DCMAKE_INSTALL_PREFIX=/usr  
+  make
+}
+
+package(){
+  cd "${srcdir}/build"
+  make DESTDIR="${pkgdir}" install
+}

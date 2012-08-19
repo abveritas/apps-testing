@@ -1,0 +1,70 @@
+#
+# Chakra Packages for Chakra, part of chakra-project.org
+#
+# maintainer (i686): Phil Miller <philm[at]chakra-project[dog]org>
+# maintainer (x86_64): Manuel Tortosa <manutortosa[at]chakra-project[dot]org>
+# maintainer (x86_64): Mateusz Krawczuk <willingmagic[at]gmail[dot]com>
+
+# include global config
+source ../_buildscripts/${current_repo}-${_arch}-cfg.conf
+
+pkgname=blender
+pkgver=2.62
+pkgrel=2
+pkgdesc="A fully integrated 3D graphics creation suite"
+arch=('i686' 'x86_64')
+license=('GPL')
+url="http://www.blender.org"
+depends=('libpng' 'libtiff' 'openexr' 'sdl' 'python3' 'desktop-file-utils' 'shared-mime-info' 'hicolor-icon-theme' 'xdg-utils' 'glew' 'libxi' 'libxmu' 
+'mesa' 'freetype2' 'openal' 'libsndfile' 'libsamplerate' 'ffmpeg' 'fftw')
+makedepends=('cmake' 'jack')
+categories=('graphics')
+install=blender.install
+source=(http://download.blender.org/source/$pkgname-$pkgver.tar.gz)
+md5sums=('f2357584a5081b03f6e60ba3efe2a610')
+
+build() {
+  cd "$srcdir/$pkgname-$pkgver"
+  
+  mkdir -p build
+  cd build
+
+ [[ $CARCH == i686 ]] && ENABLESSE2="-DSUPPORT_SSE2_BUILD:BOOL=OFF"
+
+  cmake .. \
+    -DCMAKE_INSTALL_PREFIX:PATH=/usr \
+    -DCMAKE_BUILD_TYPE:STRING=Release \
+    -DWITH_INSTALL_PORTABLE:BOOL=OFF \
+    -DWITH_PYTHON_INSTALL:BOOL=OFF \
+    -DWITH_OPENCOLLADA:BOOL=OFF \
+    -DWITH_GAMEENGINE:BOOL=ON \
+    -DWITH_PLAYER:BOOL=ON \
+    -DWITH_BUILTIN_GLEW:BOOL=OFF \
+    -DWITH_CODEC_FFMPEG:BOOL=ON \
+    -DPYTHON_VERSION:STRING=3.2 \
+    -DPYTHON_LIBPATH:STRING=/usr/lib \
+    -DPYTHON_LIBRARY:STRING=python3.2mu \
+    -DPYTHON_INCLUDE_DIRS:STRING=/usr/include/python3.2mu \
+    $ENABLESSE2
+
+  make $MAKEFLAGS
+
+  cp -rf "$srcdir"/${pkgname}-$pkgver/release/plugins/* \
+    "$srcdir"/${pkgname}-$pkgver/source/blender/blenpluginapi/
+  cd "$srcdir"/${pkgname}-$pkgver/source/blender/blenpluginapi
+  chmod 755 bmake
+  make
+}
+
+package() {
+  cd "$srcdir/$pkgname-$pkgver/build"
+  make DESTDIR="${pkgdir}" install
+  python3 -m compileall "${pkgdir}/usr/share/blender"
+
+# install plugins
+  install -d -m755 "$pkgdir"/usr/share/blender/${pkgver%[a-z]}/plugins/{sequence,texture}
+  cp "$srcdir"/${pkgname}-$pkgver/source/blender/blenpluginapi/sequence/*.so \
+    "$pkgdir"/usr/share/blender/${pkgver%[a-z]}/plugins/sequence/
+  cp "$srcdir"/${pkgname}-$pkgver/source/blender/blenpluginapi/texture/*.so \
+    "$pkgdir"/usr/share/blender/${pkgver%[a-z]}/plugins/texture/
+}

@@ -1,0 +1,33 @@
+#
+# Chakra Packages for Chakra, part of chakra-project.org
+#
+# maintainer (i686): Phil Miller <philm[at]chakra-project[dog]org>
+# maintainer (x86_64): Manuel Tortosa <manutortosa[at]chakra-project[dot]org>
+
+# from AUR package http://aur.archlinux.org/packages.php?ID=6666
+
+# include global config
+source ../_buildscripts/${current_repo}-${_arch}-cfg.conf
+
+pkgname=kbackup
+pkgver=0.7.1
+pkgrel=1
+pkgdesc="Backup program for KDE."
+arch=('i686' 'x86_64')
+url="http://www.kde-apps.org/content/show.php?content=44998"
+license=('GPLv3')
+depends=('kdelibs>=4.2' 'docbook-xsl')
+makedepends=('automoc4' 'cmake')
+categories=('utils')
+source=(http://members.aon.at/m.koller/$pkgname-$pkgver.tar.bz2)
+md5sums=('1697f6b9214fc90a05416c0211fe4368')
+
+build() {
+
+  cd $srcdir/$pkgname-$pkgver
+  mkdir build && cd build
+  cmake -DCMAKE_INSTALL_PREFIX=`kde4-config --prefix` ..
+  make || return 1
+  make DESTDIR=$pkgdir install
+
+}

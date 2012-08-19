@@ -1,0 +1,37 @@
+#
+# Chakra Packages for Chakra, part of chakra-project.org
+#
+# maintainer (i686): Phil Miller <philm[at]chakra-project[dog]org>
+# maintainer (x86_64): Manuel Tortosa <manutortosa[at]chakra-project[dot]org>
+
+# include global config
+source ../_buildscripts/${current_repo}-${_arch}-cfg.conf
+
+pkgname=kmymoney
+pkgver=4.6.0
+pkgrel=1
+pkgdesc="An finance manager for KDE4 with HBCI support"
+arch=('i686' 'x86_64')
+url="http://kmymoney2.sourceforge.net"
+license=('GPL')
+depends=('kde-workspace' 'aqbanking-qt4' 'shared-mime-info' 'boost-libs' 'libpulse' 'libofx' 'alkimia')
+makedepends=('cmake' 'automoc4' 'gwenhywfar' 'docbook-xsl' 'boost' 'doxygen')
+provides=()
+conflicts=(kmymoney2)
+replaces=(kmymoney2)
+
+source=(http://sourceforge.net/projects/kmymoney2/files/KMyMoney-KDE4/$pkgver/$pkgname-$pkgver.tar.bz2)
+sha1sums=('b3f250e82e67166bd7425a4343e744f1f2a6f743')
+
+build() {
+  cd ${srcdir}/$pkgname-$pkgver
+
+  cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=RELEASE
+  make
+}
+
+package() {
+  cd ${srcdir}/$pkgname-$pkgver
+
+  make DESTDIR=${pkgdir} install
+}

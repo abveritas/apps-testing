@@ -1,0 +1,35 @@
+#
+# Apps Packages for Chakra, part of chakra-project.org
+#
+# Neophytos Kolokotronis <tetris4@gmail.com>
+
+pkgname=ktp-filetransfer-handler
+pkgver=0.4.0
+pkgrel=3
+pkgdesc="Telepathy file transfer handler"
+arch=('i686' 'x86_64')
+url="http://www.kde.org"
+license=('GPL')
+depends=('ktp-common-internals')
+makedepends=('cmake' 'automoc4')
+conflicts=('telepathy-kde-filetransfer-handler')
+replaces=('telepathy-kde-filetransfer-handler')
+provides=('telepathy-kde-filetransfer-handler')
+groups=('kde-telepathy')
+source=("ftp://mirrors.mit.edu/kde/unstable/kde-telepathy/${pkgver}/src/${pkgname}-${pkgver}.tar.bz2")
+md5sums=('3d48afd88cb5a31f9b51710bf83bd858')
+
+build() {
+  cd "${srcdir}"
+  mkdir build
+  cd build
+  cmake ../${pkgname}-${pkgver} \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_BUILD_TYPE=Release
+  make
+}
+
+package() {
+  cd "${srcdir}"/build
+  make DESTDIR="${pkgdir}" install
+}

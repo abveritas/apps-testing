@@ -1,0 +1,38 @@
+#
+# Apps Packages for Chakra, part of chakra-project.org
+#
+# maintainer (i686): Phil Miller <philm[at]chakra-project[dog]org>
+# maintainer (x86_64): Manuel Tortosa <manutortosa[at]chakra-project[dot]org>
+
+pkgname=lyx
+pkgver=2.0.2
+pkgrel=3
+pkgdesc="An advanced open-source document processor."
+arch=('i686' 'x86_64')
+url="http://www.lyx.org"
+depends=('qt' 'texlive-core' 'python2' 'perl' 'imagemagick' 'aspell' 'boost-libs' 'icu')
+makedepends=('boost')
+optdepends=('texlive-latex3: pdf export')
+categories=('office')
+license=('GPL')
+source=(ftp://ftp.lyx.org/pub/lyx/stable/2.0.x/$pkgname-$pkgver.tar.xz \
+	lyx.desktop)
+md5sums=('f6421fdf118ace93d259220e6a3c4431'
+         '0a7a76d3d9682f8d18ef0ed002b6d6e8')
+
+build() {
+  cd ${srcdir}/${pkgname}-${pkgver}
+
+  ./configure --prefix=/usr \
+    --with-frontend=qt4 --without-included-boost
+  make 
+}
+
+package() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+
+  make DESTDIR="${pkgdir}" install
+
+  # install desktop entry
+  install -Dm644 "${srcdir}/lyx.desktop" "${pkgdir}/usr/share/applications/lyx.desktop"
+}
